@@ -16,6 +16,7 @@ export class ExchangeComponent {
   history: any[] = [];
   isLoading = false;
   showHistory = false;
+  show = false;
 
   ExchangeModel = new ExchangeModel();
   exchangeModel: ExchangeModel | null = null;
@@ -25,6 +26,7 @@ export class ExchangeComponent {
   getCurrentRate(currencyCode: string) {
     if (!currencyCode) return;
     this.isLoading = true;
+    this.show = true;
 
     this.exchangeService.getCurrentRate(currencyCode).subscribe((data: any) => {
       this.exchangeModel = data;
@@ -52,6 +54,8 @@ export class ExchangeComponent {
         const today = new Date();
         const daysAgo30 = new Date();
         daysAgo30.setDate(today.getDate() - 30);
+
+        this.show = false;
 
         this.history = historyArray
           .map((d: any) => ({
