@@ -1,0 +1,93 @@
+<div class="container-sm mt-4">
+  <hr class="border-primary">
+  <h2 class="text-center mb-4 text-info">BRL EXCHANGE RATE</h2>
+
+  <div class="d-flex flex-column align-items-center mt-5">
+    <mat-form-field class="mb-3 custom-info" appearance="fill" style="width: 100%;">
+      <mat-label>Enter the currency code</mat-label>
+      <input matInput type="text" #currencyCode>
+    </mat-form-field>
+
+    <button mat-flat-button class="button-info" (click)="getCurrentRate(currencyCode.value)">
+      EXCHANGE RESULT
+    </button>
+  </div>
+  <hr class="border-primary">
+
+  <div class="d-flex justify-content-center align-items-center" style="height: 100px;" *ngIf="isLoading">
+    <mat-spinner diameter="50"></mat-spinner>
+  </div>
+
+  <div *ngIf="!isLoading">
+    <div *ngIf="exchangeModel">
+
+      <div class="d-flex justify-content-between mb-2">
+        <div>
+          <h2>Exchange rate now</h2>
+          {{ exchangeModel.lastUpdatedAt | date: 'dd/MM/yyyy - HH:mm'}}
+        </div>
+        <div>
+          <h1 class="text-info text-uppercase">{{exchangeModel.toSymbol}}/{{exchangeModel.fromSymbol}}</h1>
+        </div>
+      </div>
+
+      <div class="alert alert-info text-center">
+        <h1 class="text-info">{{exchangeModel.exchangeRate | currency:'BRL':'symbol':'1.2-2'}}</h1>
+      </div>
+
+    </div>
+
+
+    <div *ngIf="history.length > 0">
+
+      <div class="d-flex justify-content-between align-items-center">
+        <h4 class="mb-0">LAST 30 DAYS</h4>
+        <span class="fs-1 fw-bold text-info" style="cursor: pointer;" (click)="showHistory = !showHistory">
+          {{ showHistory ? '+' : '-' }}
+        </span>
+      </div>
+
+      <hr *ngIf="showHistory" class="border-primary">
+
+      <div *ngIf="showHistory" class="row justify-content-center m-2 bg-secondary bg-opacity-10 mt-4 p-2 rounded">
+        <div class="col-12 mb-3" *ngFor="let day of history; let i = index">
+          <div class="card shadow-sm">
+            <div class="card-body">
+              <h6 class="card-title text-info fs-3">{{ day.date | date: 'dd/MM/yyyy' }}</h6>
+
+              <div class="d-flex justify-content-between mb-2">
+                <div class="d-flex flex-column">
+                  <p class="fs-3">Open: <span class="fw-semibold">{{day.openH | currency:'BRL':'symbol':'1.2-2'}}</span>
+                  </p>
+                  <p class="fs-3">Close: <span class="fw-semibold">{{ day.closeH |
+                      currency:'BRL':'symbol':'1.2-2'}}</span></p>
+                </div>
+                <div class="d-flex flex-column">
+                  <p class="fs-3">High: <span class="fw-semibold">{{day.high | currency:'BRL':'symbol':'1.2-2'}}</span>
+                  </p>
+                  <p class="fs-3">Low: <span class="fw-semibold">{{day.low | currency:'BRL':'symbol':'1.2-2'}}</span>
+                  </p>
+                </div>
+              </div>
+
+              <p class="fs-3">
+                Close diff (%):
+                <span
+                  [ngClass]="[((i === 0 ? history[i+1].closeH - day.closeH : day.closeH - history[i-1].closeH) > 0) ? 'text-success' : 'text-danger', 'fw-semibold']">
+                  {{ ((i === 0 ? history[i+1].closeH - day.closeH : day.closeH - history[i-1].closeH)
+                  / (i === 0 ? day.closeH : history[i-1].closeH) * 100) | number:'1.2-2' }}%
+                  <span
+                    *ngIf="(i === 0 ? history[i+1].closeH - day.closeH : day.closeH - history[i-1].closeH) > 0">▲</span>
+                  <span
+                    *ngIf="(i === 0 ? history[i+1].closeH - day.closeH : day.closeH - history[i-1].closeH) < 0">▼</span>
+                </span>
+              </p>
+
+            </div>
+          </div>
+        </div>
+      </div>
+      <hr *ngIf="!showHistory" class="border-primary">
+    </div>
+  </div>
+</div>

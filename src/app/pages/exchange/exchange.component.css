@@ -1,0 +1,5 @@
+.button-info {
+  background-color: var(--bs-info) !important;
+  color: white !important;
+  width: 100%;
+}
